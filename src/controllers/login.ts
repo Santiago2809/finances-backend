@@ -4,9 +4,10 @@ import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { sign } from 'jsonwebtoken';
-import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { isValidEmail, isValidPassword } from '../utils/validate';
 dotenv.config();
+
 const prisma = new PrismaClient();
 
 interface LoginRequestBody {
