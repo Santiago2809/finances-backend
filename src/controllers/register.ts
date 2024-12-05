@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import { sign } from "jsonwebtoken";
 import dotenv from 'dotenv';
 import { nanoid } from 'nanoid';
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 dotenv.config();
@@ -42,10 +43,14 @@ export const registerController = async (req: Request<{}, {}, RegisterBody>, res
                 last_login: new Date()
             }
         })
-        res.status(201).send({ user: createdUser, token: token });
+        res.status(201).cookie("token", token, { httpOnly: true }).send({ user: createdUser });
         return;
 
     } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+            res.status(409).send({ message: "The email address is already in use." });
+            return;
+        }
         res.status(500).send({ message: error });
     }
 };
