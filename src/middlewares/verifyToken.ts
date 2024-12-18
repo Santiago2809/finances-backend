@@ -15,6 +15,10 @@ export const verifyToken = (req: Request, _res: Response, next: NextFunction) =>
 		next(new AppError("Token not found", 401));
 		return;
 	}
+	if (!userId) {
+		next(new AppError("User id not found", 400));
+		return;
+	}
 	try {
 		const decodedToken = decodeToken(token) as TokenPayload;
 		// console.log(decodedToken);
