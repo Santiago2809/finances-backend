@@ -4,10 +4,7 @@ import { getTransactions } from "../../services/transactions/getTransactions.ser
 
 export const getTransactionsController = async (req: Request, res: Response, next: NextFunction) => {
 	const { userId } = req.params;
-	if (!userId) {
-		next(new AppError("User id not found", 400));
-		return;
-	}
+
 	try {
 		const transactions = await getTransactions(userId);
 		// console.log(transactions);
