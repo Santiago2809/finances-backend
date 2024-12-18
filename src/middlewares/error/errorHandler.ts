@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from "@prisma/client/runtime/library";
 import { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
 
 export class AppError extends Error {
@@ -28,9 +28,15 @@ export const handlePrismaError = (error: any): AppError => {
 		if (error.code === "P2002") {
 			return new AppError("Email already exists. Please enter a new value.", 409);
 		}
-		if (error.code === "P2025") {
-			return new AppError("Email not found. Please try again.", 404);
+		if (error.code === "P2003") {
+			return new AppError("Foreing key value not exist. Please try again", 400);
 		}
+		if (error.code === "P2025") {
+			return new AppError("Record not found. Please try again.", 404);
+		}
+	}
+	if (error instanceof PrismaClientValidationError) {
+		return new AppError("Invalid fiels. Please try again.", 400);
 	}
 	return new AppError("Database error", 500);
 };
