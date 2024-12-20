@@ -4,16 +4,18 @@ import { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtok
 
 export class AppError extends Error {
 	statusCode: number;
-	constructor(message: string, statusCode: number) {
+	errors: any[] | undefined = [];
+	constructor(message: string, statusCode: number, errors?: any[]) {
 		super(message);
 		this.statusCode = statusCode;
+		this.errors = errors;
 	}
 }
 
 export const errorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
 	console.error(error);
 	if (error instanceof AppError) {
-		res.status(error.statusCode).send({ message: error.message });
+		res.status(error.statusCode).send({ status: "error", message: error.message, errors: error.errors });
 	} else {
 		res.status(500).send({ message: "Sorry, something went wrong. Please try again." });
 	}
