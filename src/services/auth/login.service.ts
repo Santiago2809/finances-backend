@@ -1,8 +1,6 @@
-import { PrismaClient, users } from "@prisma/client";
 import { AppError } from "../../middlewares/error/errorHandler";
 import { compareHash } from "../../utils/hash";
-
-const prisma = new PrismaClient();
+import prisma from "../../utils/prismaClient";
 
 interface LoginData {
 	email: string;
@@ -35,7 +33,7 @@ export const loginUser = async (data: LoginData): Promise<User> => {
 		throw new AppError("Invalid password.", 401);
 	}
 
-	await prisma.users.update({
+	prisma.users.update({
 		where: { email: email },
 		data: {
 			last_login: new Date(),
