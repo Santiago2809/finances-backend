@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import { PORT } from "./config";
 import auth_router from "./routes/auth.routes";
 import transactions_router from "./routes/transactions.routes";
+import categories_router from "./routes/categories.routes";
 import { notFoundController } from "./controllers/404.controller";
 import { errorHandler } from "./middlewares/error/errorHandler";
 
@@ -29,6 +30,7 @@ const cors_options: cors.CorsOptions = {
 app.use(cors(cors_options));
 app.use("/auth", auth_router);
 app.use("/users/:userId/transactions", transactions_router);
+app.use("/users/:userId/categories", categories_router);
 app.use(errorHandler);
 
 app.all("*", notFoundController);
