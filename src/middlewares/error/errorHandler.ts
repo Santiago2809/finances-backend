@@ -40,6 +40,7 @@ export const handlePrismaError = (error: any): AppError => {
 	if (error instanceof PrismaClientValidationError) {
 		return new AppError("Invalid fiels. Please try again.", 400);
 	}
+	console.error(error);
 	return new AppError("Database error", 500);
 };
 
