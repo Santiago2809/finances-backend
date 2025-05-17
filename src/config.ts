@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
+import { TokenStorage } from "./utils/token/TokenStorage";
 dotenv.config();
+TokenStorage.instance;
 
 (BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
 	return this.toString();
