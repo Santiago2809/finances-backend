@@ -16,8 +16,6 @@ export const TransactionSchema = z.object({
 		return true;
 	}, "Type must be either 'income' or 'expense'"),
 
-	created_at: z.string().datetime({ message: "Date is not valid" }).optional(),
-
 	amount: z.number({ invalid_type_error: "Amount must be a number" }).positive().safe(),
 
 	user_id: z.string().min(10).max(30),
