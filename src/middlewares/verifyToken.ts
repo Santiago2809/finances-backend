@@ -15,16 +15,17 @@ export const verifyToken = (req: Request, _res: Response, next: NextFunction) =>
 		next(new AppError("Token not found", 401));
 		return;
 	}
-	if (!userId) {
-		next(new AppError("User id not found", 400));
-		return;
-	}
+	// if (!userId) {
+	// 	next(new AppError("User id not found", 400));
+	// 	return;
+	// }
 	try {
 		const decodedToken = decodeToken(token) as TokenPayload;
+		req.user = { userId: decodedToken.id };
 		// console.log(decodedToken);
-		if (decodedToken.id !== userId) {
-			throw new AppError("User ID in the request does not match the token.", 401);
-		}
+		// if (decodedToken.id !== userId) {
+		// 	throw new AppError("User ID in the request does not match the token.", 401);
+		// }
 		next();
 	} catch (error) {
 		if (error instanceof AppError) {
