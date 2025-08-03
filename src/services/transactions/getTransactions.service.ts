@@ -9,5 +9,7 @@ export const getTransactions = (userId: string) => {
 		where: {
 			user_id: userId,
 		},
+		omit: { category_id: true, user_id: true },
+		include: { categories: { select: { name: true, id: true } } },
 	});
 };
