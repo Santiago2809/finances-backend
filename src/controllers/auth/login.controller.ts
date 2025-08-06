@@ -4,6 +4,8 @@ import { sign } from "jsonwebtoken";
 import { SECRET_KEY } from "../../config";
 import { AppError, handlePrismaError } from "../../middlewares/error/errorHandler";
 import { loginUser } from "../../services/auth/login.service";
+import { generateToken } from "../../services/generateToken";
+import { generateTokens } from "../../services/auth/token.service";
 
 const prisma = new PrismaClient();
 
@@ -17,8 +19,8 @@ export const loginController = async (req: Request<{}, {}, LoginRequestBody>, re
 
 	try {
 		const user = await loginUser({ email, password });
-		const token = sign({ email: user.email, id: user.id }, SECRET_KEY, { expiresIn: "1d" });
-		res.cookie("token", token, { httpOnly: true });
+		const { accessToken } = generateTokens({ id: user.id, email: user.email });
+		res.cookie("token", accessToken, { httpOnly: true });
 		res.status(200).send({ user: user });
 		return;
 	} catch (error: unknown) {
