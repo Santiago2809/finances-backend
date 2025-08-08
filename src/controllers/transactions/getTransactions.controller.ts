@@ -3,7 +3,7 @@ import { AppError, handlePrismaError } from "../../middlewares/error/errorHandle
 import { getTransactions } from "../../services/transactions/getTransactions.service";
 
 export const getTransactionsController = async (req: Request, res: Response, next: NextFunction) => {
-	const { userId } = req.params;
+	const { userId } = req.user as { userId: string };
 
 	try {
 		const transactions = await getTransactions(userId);
