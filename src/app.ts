@@ -29,8 +29,8 @@ const cors_options: cors.CorsOptions = {
 };
 app.use(cors(cors_options));
 app.use("/auth", auth_router);
-app.use("/users/:userId/transactions", transactions_router);
-app.use("/users/:userId/categories", categories_router);
+app.use("/transactions", transactions_router);
+app.use("/categories", categories_router);
 app.use(errorHandler);
 
 app.all("*", notFoundController);
