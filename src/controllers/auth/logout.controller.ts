@@ -8,6 +8,13 @@ export const logoutController = async (req: Request, res: Response, next: NextFu
 		next(new AppError("User is not logged in", 400));
 		return;
 	}
-	res.clearCookie("token").status(200).send(createResponseBody("User logged out successfully"));
+	res.clearCookie("token", {
+		httpOnly: true,
+		partitioned: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+	})
+		.status(200)
+		.send(createResponseBody("User logged out successfully"));
 	return;
 };
