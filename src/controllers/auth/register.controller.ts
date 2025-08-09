@@ -15,7 +15,16 @@ export const registerController = async (req: Request, res: Response, next: Next
 		});
 		const { accessToken } = generateTokens({ id: createdUser.id, email: createdUser.email });
 
-		res.status(201).cookie("token", accessToken, { httpOnly: true }).send({ user: createdUser });
+		const cookieOptions = {
+			httpOnly: true,
+			partitioned: true,
+		};
+		if (process.env.NODE_ENV === "production") {
+			res.cookie("token", accessToken, { ...cookieOptions, secure: true, sameSite: "none" });
+		} else {
+			res.cookie("token", accessToken, { ...cookieOptions, secure: false, sameSite: "lax" });
+		}
+		res.status(201).send({ user: createdUser });
 	} catch (error) {
 		next(handlePrismaError(error));
 	}

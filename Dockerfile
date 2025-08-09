@@ -11,4 +11,5 @@ RUN npx prisma generate
 
 RUN npm run tsc
 
+ENV NODE_ENV=production
 CMD ["node", "dist/app.js"]
