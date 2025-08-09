@@ -1,10 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { sign } from "jsonwebtoken";
-import { SECRET_KEY } from "../../config";
 import { AppError, handlePrismaError } from "../../middlewares/error/errorHandler";
 import { loginUser } from "../../services/auth/login.service";
-import { generateToken } from "../../services/generateToken";
 import { generateTokens } from "../../services/auth/token.service";
 
 const prisma = new PrismaClient();
@@ -20,7 +17,15 @@ export const loginController = async (req: Request<{}, {}, LoginRequestBody>, re
 	try {
 		const user = await loginUser({ email, password });
 		const { accessToken } = generateTokens({ id: user.id, email: user.email });
-		res.cookie("token", accessToken, { httpOnly: true });
+		const cookieOptions = {
+			httpOnly: true,
+			partitioned: true,
+		};
+		if (process.env.NODE_ENV === "production") {
+			res.cookie("token", accessToken, { ...cookieOptions, secure: true, sameSite: "none" });
+		} else {
+			res.cookie("token", accessToken, { ...cookieOptions, secure: false, sameSite: "lax" });
+		}
 		res.status(200).send({ user: user });
 		return;
 	} catch (error: unknown) {
