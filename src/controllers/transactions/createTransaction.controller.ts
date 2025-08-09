@@ -11,10 +11,11 @@ interface requestBody {
 }
 
 export const createTransactionController = async (req: Request<{}, {}, requestBody>, res: Response, next: NextFunction) => {
-	const { name, type, amount, user_id, category_id } = req.body;
+	const userId = req.user!.userId!;
+	const { name, type, amount, category_id } = req.body;
 
 	try {
-		const createdTransaction = await createTransaction({ name, type, amount, user_id, category_id });
+		const createdTransaction = await createTransaction({ name, type, amount, user_id: userId, category_id });
 
 		res.status(201).send(createdTransaction);
 	} catch (error) {

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { TransactionSchema } from "../../utils/validateTransaction";
+import { AppError } from "../error/errorHandler";
 
 interface requestBody {
 	name: string;
@@ -10,7 +11,12 @@ interface requestBody {
 }
 
 export const validateTransaction = (req: Request<{}, {}, requestBody>, res: Response, next: NextFunction) => {
-	const { name, type, amount, user_id, category_id } = req.body;
+	const userId = req.user?.userId;
+	if (!userId) {
+		next(new AppError("Something went wrong", 500));
+		return;
+	}
+	const { name, type, amount, category_id } = req.body;
 
 	const categoryId = isNaN(Number(category_id)) ? undefined : Number(category_id);
 
@@ -18,7 +24,7 @@ export const validateTransaction = (req: Request<{}, {}, requestBody>, res: Resp
 		name,
 		type,
 		amount: Number(amount),
-		user_id,
+		user_id: userId,
 		category_id: categoryId,
 	});
 
