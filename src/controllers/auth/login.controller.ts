@@ -19,10 +19,9 @@ export const loginController = async (req: Request<{}, {}, LoginRequestBody>, re
 		const { accessToken } = generateTokens({ id: user.id, email: user.email });
 		const cookieOptions = {
 			httpOnly: true,
-			partitioned: true,
 		};
 		if (process.env.NODE_ENV === "production") {
-			res.cookie("token", accessToken, { ...cookieOptions, secure: true, sameSite: "none" });
+			res.cookie("token", accessToken, { ...cookieOptions, secure: true, sameSite: "none", partitioned: true });
 		} else {
 			res.cookie("token", accessToken, { ...cookieOptions, secure: false, sameSite: "lax" });
 		}
