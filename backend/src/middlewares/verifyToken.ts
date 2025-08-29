@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { CookieOptions, NextFunction, Request, Response } from "express";
 import { AppError, handleJWTError } from "./error/errorHandler";
 import { decodeToken } from "../services/generateToken";
 import { TokenExpiredError } from "jsonwebtoken";
@@ -39,7 +39,16 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 				const { accessToken } = refreshAccessToken({ id: decodedRefreshToken.id, email: decodedRefreshToken.email, refreshToken: refreshToken });
 				deleteTokens(token); //* Clear old tokens
 
-				res.cookie("token", accessToken, { httpOnly: true });
+				const cookieOptions: Partial<CookieOptions> = {
+					httpOnly: true,
+					sameSite: "lax",
+				};
+				if (process.env.NODE_ENV === "production") {
+					res.cookie("token", accessToken, { ...cookieOptions, secure: true });
+				} else {
+					res.cookie("token", accessToken, { ...cookieOptions, secure: false });
+				}
+				// res.cookie("token", accessToken, { httpOnly: true });
 				req.user = { userId: decodedRefreshToken.id };
 				next();
 			} catch (tokenError) {
