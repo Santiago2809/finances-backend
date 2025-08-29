@@ -2,7 +2,7 @@ import { axiosInstance } from "../../../config/axios-config";
 
 async function getUserInfo(): Promise<IUser | null> {
 	try {
-		const response = await axiosInstance.get<IUserResponse>("auth/me", {
+		const response = await axiosInstance.get<IUserResponse>("/auth/me", {
 			withCredentials: true,
 		});
 		if (response.status === 200) {

@@ -8,7 +8,7 @@ export function useValidateAuth(): IUser | null {
 	useEffect(() => {
 		(async () => {
 			try {
-				const response = await axiosInstance.get<IUserResponse>("auth/me", { withCredentials: true });
+				const response = await axiosInstance.get<IUserResponse>("/auth/me", { withCredentials: true });
 				if (response.status === 200) {
 					const userData = response.data.data;
 					if (userData) {
