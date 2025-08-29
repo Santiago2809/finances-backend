@@ -1,13 +1,18 @@
+# Build environment
 FROM node:20-alpine3.21 AS build-stage
+
+ARG VITE_API_URL
+
+ENV VITE_API_URL=${VITE_API_URL}
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm install --frozen-lockfile
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN npm run build
+RUN pnpm run build
 
 # Stage 2: Production server
 FROM nginx:alpine AS production-stage
