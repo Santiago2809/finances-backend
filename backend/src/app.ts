@@ -14,7 +14,13 @@ app.use(cookieParser());
 app.disable("x-powered-by");
 const cors_options: cors.CorsOptions = {
 	origin: (origin: any, callback) => {
-		const ACCEPTED_ORIGINS = ["http://localhost:5173", "http://localhost:4173", "http://localhost:8080", "https://fintracknow.netlify.app"];
+		const ACCEPTED_ORIGINS = [
+			"http://localhost:5173",
+			"http://localhost:4173",
+			"http://localhost:8080",
+			"https://fintracknow.netlify.app",
+			"https://finances-frontend-fakv.onrender.com",
+		];
 		if (ACCEPTED_ORIGINS.includes(origin)) {
 			return callback(null, true);
 		}
