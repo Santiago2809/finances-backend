@@ -1,0 +1,21 @@
+# Archivos de entorno y seguridad
+.env
+.env.local
+
+# Dependencias (si se instalan en la raíz)
+node_modules/
+
+# Archivos de logs y temporales
+*.log
+npm-debug.log*
+
+# Archivos de macOS
+.DS_Store
+
+# Archivos de Windows
+Thumbs.db
+Desktop.ini
+
+# Archivos de editores de código (opcional)
+.vscode/
+.idea/
