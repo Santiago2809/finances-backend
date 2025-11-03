@@ -2,12 +2,13 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import { PORT } from "./config";
+import { client, PORT } from "./config";
 import auth_router from "./routes/auth.routes";
 import transactions_router from "./routes/transactions.routes";
 import categories_router from "./routes/categories.routes";
 import { notFoundController } from "./controllers/404.controller";
 import { errorHandler } from "./middlewares/error/errorHandler";
+import { createClient } from "redis";
 
 const app = express();
 app.use(express.json());
@@ -37,5 +38,6 @@ app.use(errorHandler);
 
 app.all("*", notFoundController);
 app.listen(PORT, () => {
+	client.connect();
 	console.log("Server running in PORT: " + PORT);
 });
