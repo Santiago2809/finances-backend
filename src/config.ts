@@ -1,8 +1,10 @@
 import dotenv from "dotenv";
 import { TokenStorage } from "./utils/token/TokenStorage";
+import { createClient } from "redis";
 dotenv.config();
 TokenStorage.instance;
 
+export const client = createClient();
 (BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
 	return this.toString();
 };
