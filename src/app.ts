@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { PORT } from "./config";
 import auth_router from "./routes/auth.routes";
@@ -11,6 +12,7 @@ import { errorHandler } from "./middlewares/error/errorHandler";
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(helmet());
 app.disable("x-powered-by");
 const cors_options: cors.CorsOptions = {
 	origin: (origin: any, callback) => {
@@ -37,4 +39,3 @@ app.all("*", notFoundController);
 app.listen(PORT, () => {
 	console.log("Server running in PORT: " + PORT);
 });
-
