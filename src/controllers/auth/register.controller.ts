@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { registerUser } from "../../services/auth/register.service";
 import { handlePrismaError } from "../../middlewares/error/errorHandler";
-import { generateTokens } from "../../services/auth/token.service";
+import { client } from "../../config";
+import { redis_prefixs } from "../../types/types";
+import { createSessionCookie } from "../../utils/cookies/sessionCookie";
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
 	const { name, email, phone, password } = req.body;
@@ -13,18 +15,17 @@ export const registerController = async (req: Request, res: Response, next: Next
 			phone,
 			password,
 		});
-		const { accessToken } = generateTokens({ id: createdUser.id, email: createdUser.email });
-
-		const cookieOptions = {
-			httpOnly: true,
-			partitioned: true,
-		};
-		if (process.env.NODE_ENV === "production") {
-			res.cookie("token", accessToken, { ...cookieOptions, secure: true, sameSite: "none" });
-		} else {
-			res.cookie("token", accessToken, { ...cookieOptions, secure: false, sameSite: "lax" });
-		}
-		res.status(201).send({ user: createdUser });
+		const sid = crypto.randomUUID();
+		await client.set(
+			redis_prefixs.sessions + sid,
+			JSON.stringify({
+				userId: createdUser.id,
+				name: createdUser.name,
+			}),
+			{ EX: 60 * 60 * 24 * 7 } // 7 days
+		);
+		createSessionCookie(sid, res);
+		res.sendStatus(200);
 	} catch (error) {
 		next(handlePrismaError(error));
 	}
