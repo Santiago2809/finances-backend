@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import { AppError, handlePrismaError } from "../../middlewares/error/errorHandler";
 import { loginUser } from "../../services/auth/login.service";
-import { generateTokens } from "../../services/auth/token.service";
-
-const prisma = new PrismaClient();
+import { client } from "../../config";
+import { redis_prefixs } from "../../types/types";
+import { createSessionCookie } from "../../utils/cookies/sessionCookie";
 
 interface LoginRequestBody {
 	email: string;
@@ -16,16 +15,17 @@ export const loginController = async (req: Request<{}, {}, LoginRequestBody>, re
 
 	try {
 		const user = await loginUser({ email, password });
-		const { accessToken } = generateTokens({ id: user.id, email: user.email });
-		const cookieOptions = {
-			httpOnly: true,
-		};
-		if (process.env.NODE_ENV === "production") {
-			res.cookie("token", accessToken, { ...cookieOptions, secure: true, sameSite: "none", partitioned: true });
-		} else {
-			res.cookie("token", accessToken, { ...cookieOptions, secure: false, sameSite: "lax" });
-		}
-		res.status(200).send({ user: user });
+		const sid = crypto.randomUUID();
+		await client.set(
+			redis_prefixs.sessions + sid,
+			JSON.stringify({
+				userId: user.id,
+				name: user.name,
+			}),
+			{ EX: 60 * 60 * 24 * 7 } // 7 days
+		);
+		createSessionCookie(sid, res);
+		res.sendStatus(200);
 		return;
 	} catch (error: unknown) {
 		if (error instanceof AppError) {

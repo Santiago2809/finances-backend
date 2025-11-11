@@ -8,7 +8,6 @@ import transactions_router from "./routes/transactions.routes";
 import categories_router from "./routes/categories.routes";
 import { notFoundController } from "./controllers/404.controller";
 import { errorHandler } from "./middlewares/error/errorHandler";
-import { createClient } from "redis";
 
 const app = express();
 app.use(express.json());

@@ -6,11 +6,8 @@ import { deleteTransactionController } from "../controllers/transactions/deleteT
 import { updateTransactionController } from "../controllers/transactions/updateTransaction.controller";
 import { validateUpdateTransaction } from "../middlewares/transactions/validateUpdateTransaction";
 import { validateTransaction } from "../middlewares/transactions/validateTransaction";
-import { verifyToken } from "../middlewares/verifyToken";
 
 const router = Router({ mergeParams: true });
-
-router.use(verifyToken);
 
 //* GET /transactions/ - Get all user transactions.
 router.get("/", getTransactionsController);

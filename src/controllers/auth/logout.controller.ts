@@ -1,20 +1,14 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError } from "../../middlewares/error/errorHandler";
-import { createResponseBody } from "../../utils/createResponseBody";
+import { client } from "../../config";
+import { redis_prefixs } from "../../types/types";
+import { clearSessionCookie } from "../../utils/cookies/sessionCookie";
 
 export const logoutController = async (req: Request, res: Response, next: NextFunction) => {
-	const { token } = req.cookies;
-	if (!token) {
-		next(new AppError("User is not logged in", 400));
-		return;
+	const sid = req.cookies.sid as string | undefined;
+	if (sid) {
+		await client.del(redis_prefixs.sessions + sid);
+		clearSessionCookie(res);
 	}
-	res.clearCookie("token", {
-		httpOnly: true,
-		partitioned: process.env.NODE_ENV === "production",
-		secure: process.env.NODE_ENV === "production",
-		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-	})
-		.status(200)
-		.send(createResponseBody("User logged out successfully"));
+	res.sendStatus(200);
 	return;
 };
