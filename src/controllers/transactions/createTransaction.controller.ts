@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { createTransaction } from "../../services/transactions/createTransaction.service";
 import { AppError, handlePrismaError } from "../../middlewares/error/errorHandler";
+import { client } from "../../config";
+import { redis_prefixs } from "../../types/types";
 
 interface requestBody {
 	name: string;
@@ -16,6 +18,7 @@ export const createTransactionController = async (req: Request<{}, {}, requestBo
 
 	try {
 		const createdTransaction = await createTransaction({ name, type, amount, user_id: userId, category_id });
+		await client.del(redis_prefixs.userTransactions + userId);
 
 		res.status(201).send(createdTransaction);
 	} catch (error) {
