@@ -27,5 +27,6 @@ export const createTransaction = async (data: Transaction) => {
 		omit: {
 			user_id: true,
 		},
+		include: { categories: { select: { name: true, id: true } } },
 	});
 };
