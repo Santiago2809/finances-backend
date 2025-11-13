@@ -13,7 +13,7 @@ export const validateBody = (type: "login" | "register") => {
 		const { name, email, phone, password }: BodyData = req.body;
 
 		if (type === "register") {
-			if (!(isValidName(name) && isValidEmail(email) && isValidPhone(phone) && isValidPassword(password))) {
+			if (!(isValidName(name) && isValidEmail(email) /* && isValidPhone(phone) */ && isValidPassword(password))) {
 				next(new AppError("Please check your fields and try again.", 400));
 				return;
 			}
