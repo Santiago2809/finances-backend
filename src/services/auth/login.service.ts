@@ -33,12 +33,16 @@ export const loginUser = async (data: LoginData): Promise<User> => {
 		throw new AppError("Invalid password.", 401);
 	}
 
-	prisma.users.update({
-		where: { email: email },
-		data: {
-			last_login: new Date(),
-		},
-	});
+	prisma.users
+		.update({
+			where: { email: email },
+			data: {
+				last_login: new Date(),
+			},
+		})
+		.catch((error) => {
+			console.error("Failed to update last login:", error);
+		});
 
 	const { password: userpassword, ...rest } = user;
 	return rest;
